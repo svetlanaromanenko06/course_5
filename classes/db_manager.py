@@ -100,3 +100,23 @@ class DBManager:
 
         conn.commit()
         conn.close()
+
+    def get_companies_and_vacancies_count(self):
+        conn = psycopg2.connect(dbname=self.dbname, **self.params)
+
+        query = """
+           SELECT employer, COUNT(*) AS vacancies_count
+           FROM vacancies
+           GROUP BY employer;
+           """
+
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        for company, vacancies_count in results:
+            print(f"Company: {company}, Vacancies Count: {vacancies_count}")
+
+        conn.commit()
+        cursor.close()
+        conn.close()
